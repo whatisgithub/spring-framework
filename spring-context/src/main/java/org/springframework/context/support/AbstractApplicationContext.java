@@ -517,40 +517,86 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
 			// Prepare this context for refreshing.
+			/**
+			 * 获取系统配置信息和验证信息
+			 * 初始化applicationListeners、applicationEvents容器对象
+			 */
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
+			/**
+			 * 创建beanFactory对象DefaultListableBeanFactory
+			 * 设置一些简单的属性
+			 * 加载BeanDefinition信息到beanFactory中
+			 */
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
+			/**
+			 * 实例化后的beanFactory还有一些属性要进行设置
+			 * 比如classLoader和beanPostProcessor
+			 * 当然还会有一些容器本身的对象需要做忽略处理，就是不处理
+			 */
 			prepareBeanFactory(beanFactory);
 
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
+				/**
+				 * 目前没有实现类
+				 * 主要是对beanFactory进行一些扩展处理，
+				 * 所以这个地方埋入一个点
+				 */
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
+				/**
+				 * 执行beanFactoryPostProcessor处理
+				 * 对beanFacotry进行增强，有点类似责任链模式
+				 */
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
+				/**
+				 * 获取所有beanProcessor用来增加bean
+				 * 要区分beanFactoryProcessor和BeanProcessor
+				 * 一个用来增强bean工厂beanDefinition，一个用来增强Bean信息
+				 */
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
+				/**
+				 * 资源国际化相关处理
+				 */
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
+				/**
+				 * 初始化广播器实例，后续用来广播各种事件（event）
+				 */
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
+				/**
+				 * 继续处理其他，埋点交给子类进行定制化操作
+				 */
 				onRefresh();
 
 				// Check for listener beans and register them.
+				/**
+				 * 把各种事件监听器注册到beanFactory中，并使用上面的广播器广播事件，让这些监听器进行处理
+				 */
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
+				/**
+				 * 开始实例化bean信息，就是创建bean
+				 */
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
+				/**
+				 * 完成bean创建并发布事件
+				 */
 				finishRefresh();
 			}
 

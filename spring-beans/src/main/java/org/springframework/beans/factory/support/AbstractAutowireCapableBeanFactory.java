@@ -502,6 +502,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		try {
 			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
+			/**
+			 * 实例化之前交给beanPostProcess处理下，要是能创建代理类就直接使用代理类，spring本身不进行实例化和初始化操作了
+			 */
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
 			if (bean != null) {
 				return bean;
@@ -553,6 +556,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
 		}
 		if (instanceWrapper == null) {
+			//通过反射或者cglib创建bean实例，然后包装下
 			instanceWrapper = createBeanInstance(beanName, mbd, args);
 		}
 		Object bean = instanceWrapper.getWrappedInstance();
@@ -590,7 +594,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Initialize the bean instance.
 		Object exposedObject = bean;
 		try {
+			//创建完的对象各种属性还没有值，这个就是填充下他所配置的值
 			populateBean(beanName, mbd, instanceWrapper);
+			//初始话bean 比如bean实现了aware接口就给他注入spring的属性，
+			//要是指定了init-method 此时调用初始化方法完成对象创建
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
 		}
 		catch (Throwable ex) {
