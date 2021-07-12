@@ -454,6 +454,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @return the ResourcePatternResolver for this context
 	 * @see #getResources
 	 * @see org.springframework.core.io.support.PathMatchingResourcePatternResolver
+	 *
+	 * 就是用来根据一些语法规则找到对应的xml文件，后续扫描这些xml文件
+	 * 或者说将文件转换成resource资源
 	 */
 	protected ResourcePatternResolver getResourcePatternResolver() {
 		return new PathMatchingResourcePatternResolver(this);
@@ -520,6 +523,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			/**
 			 * 获取系统配置信息和验证信息
 			 * 初始化applicationListeners、applicationEvents容器对象
+			 * 同时留下几个方法用来扩展环境变量等参数的必传校验检测
 			 */
 			prepareRefresh();
 
@@ -644,12 +648,22 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Initialize any placeholder property sources in the context environment.
+		/**
+		 * 留给子类进行环境变量和系统属性进行扩展操作
+		 * 比如可以设置某个属性必须存在，或者给一些属性一些默认值
+		 */
 		initPropertySources();
 
 		// Validate that all properties marked as required are resolvable:
 		// see ConfigurablePropertyResolver#setRequiredProperties
+		/**
+		 * 校验设置的必须存在的属性值，要是不存在会报错，然后停止启动beanFactory
+		 */
 		getEnvironment().validateRequiredProperties();
 
+		/**
+		 * 初始化listeners监听器容器
+		 */
 		// Store pre-refresh ApplicationListeners...
 		if (this.earlyApplicationListeners == null) {
 			this.earlyApplicationListeners = new LinkedHashSet<>(this.applicationListeners);
@@ -660,6 +674,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			this.applicationListeners.addAll(this.earlyApplicationListeners);
 		}
 
+		/**
+		 * 初始化events容器
+		 */
 		// Allow for the collection of early ApplicationEvents,
 		// to be published once the multicaster is available...
 		this.earlyApplicationEvents = new LinkedHashSet<>();

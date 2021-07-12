@@ -3,6 +3,8 @@ package org.springframework;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.Enumeration;
+
 /**
  * @author qiangge
  */
@@ -14,4 +16,5 @@ public class TestMain {
 
 		System.out.println(person.getAge());
 	}
+
 }

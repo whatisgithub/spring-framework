@@ -139,6 +139,9 @@ public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContex
 			throws BeansException {
 
 		super(parent);
+		/**
+		 * 看下配置文件名称中有没有占位符，有的话根据环境变量或者属性，给他替换下
+		 */
 		setConfigLocations(configLocations);
 		if (refresh) {
 			refresh();

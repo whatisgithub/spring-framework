@@ -78,6 +78,10 @@ public abstract class AbstractRefreshableConfigApplicationContext extends Abstra
 			Assert.noNullElements(locations, "Config locations must not be null");
 			this.configLocations = new String[locations.length];
 			for (int i = 0; i < locations.length; i++) {
+				/**
+				 * 解析配置文件名称list中的变量比如${username}-xxx.xml
+				 * 会把环境变量或者配置属性中对应username进行替换操作
+				 */
 				this.configLocations[i] = resolvePath(locations[i]).trim();
 			}
 		}
