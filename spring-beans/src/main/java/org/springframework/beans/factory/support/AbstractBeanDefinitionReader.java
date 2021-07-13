@@ -90,6 +90,7 @@ public abstract class AbstractBeanDefinitionReader implements BeanDefinitionRead
 			this.resourceLoader = (ResourceLoader) this.registry;
 		}
 		else {
+			//初始化资源解析对象，就是把配置文件解析成resource对象
 			this.resourceLoader = new PathMatchingResourcePatternResolver();
 		}
 
