@@ -60,6 +60,7 @@ public class DelegatingEntityResolver implements EntityResolver {
 	 */
 	public DelegatingEntityResolver(@Nullable ClassLoader classLoader) {
 		this.dtdResolver = new BeansDtdResolver();
+		//这个会解析域名xsd文件 -> xsd本地文件映射
 		this.schemaResolver = new PluggableSchemaResolver(classLoader);
 	}
 
